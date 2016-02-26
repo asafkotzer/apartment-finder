@@ -3,6 +3,8 @@ const fetch = require('node-fetch');
 const uuid = require('node-uuid');
 const geolib = require('geolib');
 const sendgrid = require('sendgrid')('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');
+const EmailTemplate = require('email-templates').EmailTemplate
+const path = require('path')
 
 const buildUrl = (options) => {
   const base = "http://m.yad2.co.il/API/MadorResults.php?";
@@ -65,8 +67,8 @@ console.log(url)
 const queryResult = [
   { 
     city: 'גבעתיים',
-    address: 'המעיין',
-    rooms: 4,
+    address: 'המעיין 5',
+    roomCount: 4,
     price: 2150000,
     picture: 'http://images.yad2.co.il/Pic/201507/08/2_5/o/e_soft_2_5_2_38950_20150708190749.jpg',
     location: {
@@ -77,13 +79,19 @@ const queryResult = [
   }
 ];
 
+const templateDir = path.join(__dirname, 'new-ad-email')
+const emailTemplate = new EmailTemplate(templateDir)
+emailTemplate.render(queryResult[0], function (err, results) {
+  console.log(results.html);
+})
+
 queryResult
   .filter(x => geolib.isPointInside(x.location, searchArea))
   .forEach(x => sendEmail({ 
     to: 'asafkotzer@gmail.com',
     subject: 'New apartment',
     body: '<h1>New!</h1>'
-  }, (result) => console.log(result)));
+  }));
 
 console.log("waiting 10 seconds");
 setTimeout(function() { }, 10000);
