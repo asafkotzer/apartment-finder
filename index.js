@@ -16,8 +16,19 @@ const buildUrl = (options) => {
     udid:uuid.v1()
   }
 
-  return base + _.toPairs(Object.assign(options, queryDefaults)).map(x => x.join('=')).join('&');
+  return base + _.toPairs(Object.assign(options, defaults)).map(x => x.join('=')).join('&');
 }
+
+const sendEmail = (options, callback) => {
+  const model = {
+    from: 'asafkotzer@gmail.com',
+    to: options.to,
+    subject : options.subject,
+    html: options.body
+  };
+
+  sendgrid.send(model, callback);
+};
 
 const searchArea = [
   {latitude: 32.078284, longitude: 34.801168},
@@ -50,51 +61,29 @@ console.log(url)
 //   .then(json => console.log(json))
 //   .catch(err => console.error(err));
 
-// 2. Filter for area
-// inside:
-console.log(geolib.isPointInside(
-  {latitude: 32.074647, longitude: 34.807799},
-  [
-    {latitude: 32.075593, longitude: 34.806705},
-    {latitude: 32.075629, longitude: 34.809151},
-    {latitude: 32.073993, longitude: 34.809172},
-    {latitude: 32.073975, longitude: 34.806747}
-  ]));
+// fetching is not working yet, so I'll fake a collection:
+const queryResult = [
+  { 
+    city: 'גבעתיים',
+    address: 'המעיין',
+    rooms: 4,
+    price: 2150000,
+    picture: 'http://images.yad2.co.il/Pic/201507/08/2_5/o/e_soft_2_5_2_38950_20150708190749.jpg',
+    location: {
+      latitude: 32.072175,
+      longitude: 34.808873
+    },
+    originalAdUrl: 'http://m.yad2.co.il/Nadlan/TivSalesAd.php?NadlanID=1370970&utm_source=AndroidApp&utm_medium=link&utm_campaign=Androidapp-AdPage&AppType=Android&mapAddress=adrs%3D%D7%92%D7%91%D7%A2%D7%AA%D7%99%D7%99%D7%9D%26lat%3D32.072175%26lng%3D34.808873'
+  }
+];
 
-// outside:
-console.log(geolib.isPointInside(
-  {latitude: 32.072811, longitude: 34.806511},
-  [
-    {latitude: 32.075593, longitude: 34.806705},
-    {latitude: 32.075629, longitude: 34.809151},
-    {latitude: 32.073993, longitude: 34.809172},
-    {latitude: 32.073975, longitude: 34.806747}
-  ]));
-
-// 3. Send email
-const sendEmail = (options, callback) => {
-  const model = {
-    from: 'asafkotzer@gmail.com',
-    to: options.to,
-    subject : options.subject,
-    html: options.body
-  };
-
-  sendgrid.send(model, callback);
-};
-
-// Email will include the following fields
-// adType
-// city
-// address
-// rooms
-// price
-// pictures
-// location.coordinates.latitude
-// location.coordinates.longitude
-// originalAdUrl
-
-sendEmail({to: 'asafkotzer@gmail.com', subject: 'New apartment', body: '<h1>New!</h1>'}, (result) => console.log(result))
+queryResult
+  .filter(x => geolib.isPointInside(x.location, searchArea))
+  .forEach(x => sendEmail({ 
+    to: 'asafkotzer@gmail.com',
+    subject: 'New apartment',
+    body: '<h1>New!</h1>'
+  }, (result) => console.log(result)));
 
 console.log("waiting 10 seconds");
 setTimeout(function() { }, 10000);
