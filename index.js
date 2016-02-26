@@ -5,6 +5,10 @@ const geolib = require('geolib');
 const sendgrid = require('sendgrid')('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');
 const EmailTemplate = require('email-templates').EmailTemplate
 const path = require('path')
+const query = require('./query.js');
+
+const templateDir = path.join(__dirname, 'new-ad-email')
+const emailTemplate = new EmailTemplate(templateDir)
 
 const buildUrl = (options) => {
   const base = "http://m.yad2.co.il/API/MadorResults.php?";
@@ -32,29 +36,7 @@ const sendEmail = (options, callback) => {
   sendgrid.send(model, callback);
 };
 
-const searchArea = [
-  {latitude: 32.078284, longitude: 34.801168},
-  {latitude: 32.079157, longitude: 34.815073},
-  {latitude: 32.068174, longitude: 34.814472},
-  {latitude: 32.066501, longitude: 34.808636},
-  {latitude: 32.063810, longitude: 34.796877},
-  {latitude: 32.068538, longitude: 34.795761},
-  {latitude: 32.071593, longitude: 34.797049},
-  {latitude: 32.070865, longitude: 34.799881},
-  {latitude: 32.076684, longitude: 34.802198},
-]
-
-const query = {
-  FromPrice: 1500000,
-  ToPrice: 2500000,
-  AreaID:'48.0',
-  FromRooms:3.5,
-  ToRooms:4.5,
-  FromSQM:80,
-  ToSQM:120
-}
-
-const url = buildUrl(query);
+const url = buildUrl(query.apartment);
 
 // 1. Get apartments
 console.log(url)
@@ -75,23 +57,21 @@ const queryResult = [
       latitude: 32.072175,
       longitude: 34.808873
     },
-    originalAdUrl: 'http://m.yad2.co.il/Nadlan/TivSalesAd.php?NadlanID=1370970&utm_source=AndroidApp&utm_medium=link&utm_campaign=Androidapp-AdPage&AppType=Android&mapAddress=adrs%3D%D7%92%D7%91%D7%A2%D7%AA%D7%99%D7%99%D7%9D%26lat%3D32.072175%26lng%3D34.808873'
+    originalAdUrl: 'https://m.yad2.co.il/Nadlan/TivSalesAd.php?NadlanID=1370970&utm_source=AndroidApp&utm_medium=link&utm_campaign=Androidapp-AdPage&AppType=Android&mapAddress=adrs%3D%D7%92%D7%91%D7%A2%D7%AA%D7%99%D7%99%D7%9D%26lat%3D32.072175%26lng%3D34.808873'
   }
 ];
 
-const templateDir = path.join(__dirname, 'new-ad-email')
-const emailTemplate = new EmailTemplate(templateDir)
-emailTemplate.render(queryResult[0], function (err, results) {
-  console.log(results.html);
-})
-
 queryResult
-  .filter(x => geolib.isPointInside(x.location, searchArea))
-  .forEach(x => sendEmail({ 
-    to: 'asafkotzer@gmail.com',
-    subject: 'New apartment',
-    body: '<h1>New!</h1>'
-  }));
+  .filter(x => geolib.isPointInside(x.location, query.searchArea))
+  .forEach(x => {
+    emailTemplate.render(queryResult[0], (err, results) => {
+      sendEmail({ 
+        to: 'asafkotzer@gmail.com',
+        subject: results.text,
+        body: results.html
+      })
+    })
+  });
 
 console.log("waiting 10 seconds");
 setTimeout(function() { }, 10000);
