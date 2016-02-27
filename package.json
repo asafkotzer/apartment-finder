@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.3.3",
     "email-templates": "^2.1.0",
     "geolib": "^2.0.18",
     "handlebars": "^3.0.3",
