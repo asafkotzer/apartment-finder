@@ -1,6 +1,5 @@
 *~
 node_modules
 .DS_Store
-client_secrets.json
-public
 npm-debug.log
+dev.json
