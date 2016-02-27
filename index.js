@@ -42,7 +42,7 @@ const getAdsFromPage = url => {
         .filter(x => x.publishDate.isAfter(query.minimumPublishDate))
         .map(x => {
           previousAds.push(x.id);
-          console.log('Sending email for ad: ' + x.originalAdUrl);
+          console.log('Sending email for ad: ' + x.id);
 
           return emailTemplate.render(x)
             .then(results => sendEmail({ to: query.emailAddresses, subject: results.text, body: results.html }));
