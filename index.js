@@ -1,6 +1,5 @@
 const fetch = require('node-fetch');
 const geolib = require('geolib');
-const sendgrid = require('sendgrid')('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');
 const EmailTemplate = require('email-templates').EmailTemplate
 const path = require('path')
 const query = require('./query.js');
@@ -11,21 +10,22 @@ const jsonfile = require('jsonfile');
 const util = require('util')
 const blue
 const _ = require('lodash');
+const Handlebars = require('handlebars');
 
 const templateDir = path.join(__dirname, 'new-ad-email')
 const emailTemplate = new EmailTemplate(templateDir)
+Handlebars.registerHelper('foo', function(source) {
+  return source === 'agent' ? 'תיווך' : 'פרטי';
+});
 
 const previousAdsFilename = './previous-ads.json';
 const previousAds = (jsonfile.readFileSync(previousAdsFilename) || {}).ads || [];
-console.log(previousAds)
 
-const fetchAds = url => {
+const getAdsFromPage = url => {
   if (!url) {
-    console.log('Loop complete')
+    console.log('Recursion complete')
     return;
   }
-
-  console.log('Getting page: ' + url)
 
   fetch(url)
     .then(response => response.json())
@@ -42,27 +42,24 @@ const fetchAds = url => {
         .filter(x => x.publishDate.isAfter(query.minimumPublishDate))
         .map(x => {
           previousAds.push(x.id);
-          console.log(x.id);
-          return Promise.resolve();
-          // THIS SHOULD BE A PROMISE WE RETURN, ALONG WITH NEXTPAGEURL
-          // emailTemplate.render(queryResult[0], (err, results) => {
-          //   sendEmail({ 
-          //     to: 'asafkotzer@gmail.com',
-          //     subject: results.text,
-          //     body: results.html
-          //   })
-          // })
+          console.log('Sending email for ad: ' + x.originalAdUrl);
+
+          return emailTemplate.render(x)
+            .then(results => sendEmail({ to: query.emailAddresses, subject: results.text, body: results.html }));
         });
 
         return Promise.all(operations)
           .then(() => jsonfile.writeFile(previousAdsFilename, { ads: previousAds }))
           .then(() => json.NextPageURL);
     })
-    .then(nextPageUrl => fetchAds(nextPageUrl))
+    .then(nextPageUrl => getAdsFromPage(nextPageUrl))
     .catch(err => console.error(err));
 };
 
-fetchAds(buildUrl(query.apartment));
+const fetchAds = () => {
+  console.log('Starting recursion');
+  getAdsFromPage(buildUrl(query.apartment))
+};
 
-console.log("waiting 10 seconds");
-setTimeout(function() { }, 10000);
+fetchAds();
+setInterval(() => fetchAds(), 60*60*1000);
