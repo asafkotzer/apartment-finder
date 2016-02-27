@@ -7,6 +7,9 @@ const query = require('./query.js');
 const buildUrl = require('./url-builder.js');
 const sendEmail = require('./email-sender.js');
 const parseAd = require('./ad-parser.js');
+const jsonfile = require('jsonfile');
+const util = require('util')
+const _ = require('lodash');
 
 const templateDir = path.join(__dirname, 'new-ad-email')
 const emailTemplate = new EmailTemplate(templateDir)
@@ -14,7 +17,11 @@ const emailTemplate = new EmailTemplate(templateDir)
 const url = buildUrl(query.apartment);
 console.log(url)
 
-fetch(url, { method: 'GET' })
+const previousAdsFilename = './previous-ads.json';
+const previousAds = (jsonfile.readFileSync(previousAdsFilename) || {}).ads || [];
+console.log(previousAds)
+
+fetch(url)
   .then(response => response.json())
   .then(json => {
     const results = ((json.Private || {}).Results || []).map(x => Object.assign(x, { source: 'private' }))
@@ -23,11 +30,13 @@ fetch(url, { method: 'GET' })
     results
       .filter(x => x.Type === 'Ad')
       .map(x => parseAd(x))
+      .filter(x => !_.includes(previousAds, x.id))
       .filter(x => x.location.latitude && x.location.longitude)
       .filter(x => geolib.isPointInside(x.location, query.searchArea))
       .filter(x => x.publishDate.isAfter(query.minimumPublishDate))
       .forEach(x => {
-        console.log(x.location);
+        previousAds.push(x.id);
+        console.log(x.id);
         // emailTemplate.render(queryResult[0], (err, results) => {
         //   sendEmail({ 
         //     to: 'asafkotzer@gmail.com',
@@ -37,6 +46,7 @@ fetch(url, { method: 'GET' })
         // })
       });
   })
+  .then(() => jsonfile.writeFile(previousAdsFilename, { ads: previousAds }))
   .catch(err => console.error(err));
 
 console.log("waiting 10 seconds");
