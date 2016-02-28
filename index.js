@@ -44,7 +44,7 @@ const getAdsFromPage = url => {
           console.log('Sending email for ad: ' + x.id);
 
           return emailTemplate.render(x)
-            .then(results => sendEmail({ to: query.emailAddresses, subject: results.text, body: results.html }));
+            .then(results => sendEmail({ to: query.emailAddresses, subject: results.text, body: results.html }, (err) => {if (err) console.log(err);}));
         });
 
         return Promise.all(operations)

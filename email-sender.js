@@ -1,5 +1,5 @@
 const emailConfig = require('./nconf').get('email');
-const sendgrid = require('sendgrid')(emailConfig.apiKey);
+const sendgrid = require('sendgrid')(emailConfig.sendgridApiKey);
 
 module.exports = (options, callback) => {
   const model = {
