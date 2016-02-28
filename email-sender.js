@@ -1,8 +1,17 @@
-const emailConfig = require('./nconf').get('email');
+const emailConfig = require('./nconf.js').get('email');
+const path = require('path')
 const sendgrid = require('sendgrid')(emailConfig.sendgridApiKey);
+const EmailTemplate = require('email-templates').EmailTemplate
+const templateDir = path.join(__dirname, 'new-ad-email')
+const emailTemplate = new EmailTemplate(templateDir)
 
-module.exports = (options, callback) => {
-  const model = {
+const Handlebars = require('handlebars');
+Handlebars.registerHelper('foo', function(source) {
+  return source === 'agent' ? 'תיווך' : 'פרטי';
+});
+
+const send = (options, callback) => {
+  const message = {
     from: 'ads@apartment-finder.com',
     fromname: 'Apartment Finder',
     replyto: emailConfig.from,
@@ -11,5 +20,15 @@ module.exports = (options, callback) => {
     html: options.body
   };
 
-  sendgrid.send(model, callback);
+  sendgrid.send(message, callback);
 };
+
+module.exports = model => 
+  emailTemplate.render(model)
+    .then(results => send({ 
+      subject: results.text, 
+      body: results.html 
+    },
+    (err) => {
+      if (err) console.log(err);
+    }));

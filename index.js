@@ -1,28 +1,17 @@
 const fetch = require('node-fetch');
 const geolib = require('geolib');
-const EmailTemplate = require('email-templates').EmailTemplate
-const path = require('path')
 const query = require('./query.js');
 const buildUrl = require('./url-builder.js');
 const sendEmail = require('./email-sender.js');
 const parseAd = require('./ad-parser.js');
-const jsonfile = require('jsonfile');
-const util = require('util')
-const _ = require('lodash');
-const Handlebars = require('handlebars');
+const adsRepository = require('./ads-repository.js');
+const moment = require('moment');
 
-const templateDir = path.join(__dirname, 'new-ad-email')
-const emailTemplate = new EmailTemplate(templateDir)
-Handlebars.registerHelper('foo', function(source) {
-  return source === 'agent' ? 'תיווך' : 'פרטי';
-});
-
-const previousAdsFilename = './previous-ads.json';
-const previousAds = (jsonfile.readFileSync(previousAdsFilename) || {}).ads || [];
+const log = message => console.log('[' + moment().format('HH:mm') + '] ' + message);
 
 const getAdsFromPage = url => {
   if (!url) {
-    console.log('Recursion complete')
+    log('Recursion complete')
     return;
   }
 
@@ -35,28 +24,26 @@ const getAdsFromPage = url => {
       const operations = results
         .filter(x => x.Type === 'Ad')
         .map(x => parseAd(x))
-        .filter(x => !_.includes(previousAds, x.id))
+        .filter(x => !adsRepository.wasAlreadySent(x.id))
         .filter(x => x.location.latitude && x.location.longitude)
         .filter(x => geolib.isPointInside(x.location, query.searchArea))
         .filter(x => x.publishDate.isAfter(query.minimumPublishDate))
         .map(x => {
-          previousAds.push(x.id);
-          console.log('Sending email for ad: ' + x.id);
-
-          return emailTemplate.render(x)
-            .then(results => sendEmail({ to: query.emailAddresses, subject: results.text, body: results.html }, (err) => {if (err) console.log(err);}));
+          log('Sending email for ad: ' + x.id);
+          adsRepository.updateSent(x.id);
+          return sendEmail(x);
         });
 
         return Promise.all(operations)
-          .then(() => jsonfile.writeFile(previousAdsFilename, { ads: previousAds }))
+          .then(() => adsRepository.flush())
           .then(() => json.NextPageURL);
     })
     .then(nextPageUrl => getAdsFromPage(nextPageUrl))
-    .catch(err => console.error(err));
+    .catch(err => log(err));
 };
 
 const fetchAds = () => {
-  console.log('Starting recursion');
+  log('Starting recursion');
   getAdsFromPage(buildUrl(query.apartment))
 };
 
