@@ -13,5 +13,7 @@
 }
 ```
 
+### Edit query.js
+
 ### Run
 `node index.js`
