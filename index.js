@@ -8,7 +8,6 @@ const sendEmail = require('./email-sender.js');
 const parseAd = require('./ad-parser.js');
 const jsonfile = require('jsonfile');
 const util = require('util')
-const blue
 const _ = require('lodash');
 const Handlebars = require('handlebars');
 
