@@ -2,7 +2,7 @@
 
 
 ## Usage
-### Create a config.json and put it in the root folder
+1. Create a config.json and put it in the root folder
 ```
 {
   "email": {
@@ -13,7 +13,7 @@
 }
 ```
 
-### Edit query.js
+2. Edit query.js
 
-### Run
+3. Run
 `node index.js`
