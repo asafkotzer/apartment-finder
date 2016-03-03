@@ -14,7 +14,8 @@ module.exports = {
   apartment: {
     FromPrice: 1500000,
     ToPrice: 2500000,
-    AreaID:2,     // 1:TA, 2:center, 3:Ramat-Gan-Givatatyim, 48:TA center
+    AreaID:2,     // 1:TA, 2:center, 3:Ramat-Gan-Givatatyim, 48:TA center, 19:HaSharon
+    SubCatID:1,   // buy=1,rent=2
     FromRooms:3.5,
     ToRooms:4.5,
     FromSQM:80,

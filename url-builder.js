@@ -5,7 +5,7 @@ module.exports = (options) => {
   const base = "http://m.yad2.co.il/API/MadorResults.php?";
   const defaults = {
     CatID:2,    //cars=1,apartments=2
-    SubCatID:1, //sell=1,rent=2
+    SubCatID:1, //buy=1,rent=2
     PriceType:'0.0',
     AppType:'Android',
     AppVersion:'2.4',
@@ -13,5 +13,5 @@ module.exports = (options) => {
     udid:uuid.v1()
   }
 
-  return base + _.toPairs(Object.assign(options, defaults)).map(x => x.join('=')).join('&');
+  return base + _.toPairs(Object.assign(defaults, options)).map(x => x.join('=')).join('&');
 }
