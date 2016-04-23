@@ -6,6 +6,7 @@ const sendEmail = require('./email-sender.js');
 const parseAd = require('./ad-parser.js');
 const adsRepository = require('./ads-repository.js');
 const moment = require('moment');
+const server = require('./management/server.js')
 
 const log = message => console.log('[' + moment().format('HH:mm') + '] ' + message);
 
@@ -47,5 +48,7 @@ const fetchAds = () => {
   getAdsFromPage(buildUrl(query.apartment))
 };
 
-fetchAds();
-setInterval(() => fetchAds(), 60*60*1000);
+server();
+
+// fetchAds();
+// setInterval(() => fetchAds(), 60*60*1000);
