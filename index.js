@@ -5,6 +5,7 @@ const buildUrl = require('./url-builder.js');
 const sendEmail = require('./email-sender.js');
 const parseAd = require('./ad-parser.js');
 const adsRepository = require('./ads-repository.js');
+const browserFilter = require('./browser-filter.js')
 const moment = require('moment');
 const server = require('./management/server.js')
 
@@ -30,9 +31,17 @@ const getAdsFromPage = url => {
         .filter(x => geolib.isPointInside(x.location, query.searchArea))
         .filter(x => x.publishDate.isAfter(query.minimumPublishDate))
         .map(x => {
-          log('Sending email for ad: ' + x.id);
           adsRepository.updateSent(x.id);
-          return sendEmail(x);
+          return browserFilter                                          // REFACTOR PROMISE INTO MAP AND JUST 'THEN' ON RESULT
+            .checkForTraits(x.originalAdUrl, ['חניה', 'מעלית'])         // MOVE TO QUERY
+            .then(hasTraits => {
+              console.log('Does ' + x.originalAdUrl + ' have traits? ' + hasTraits);
+              if (hasTraits) {
+                log('Sending email for ad: ' + x.id);
+                return sendEmail(x);
+              }
+              return Promise.resolve(true);
+            });
         });
 
         return Promise.all(operations)
@@ -50,5 +59,5 @@ const fetchAds = () => {
 
 server();
 
-// fetchAds();
-// setInterval(() => fetchAds(), 60*60*1000);
+fetchAds();
+setInterval(() => fetchAds(), 60*60*1000);

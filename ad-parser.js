@@ -14,5 +14,5 @@ module.exports = rawJson => {
       latitude: rawJson.latitude,
       longitude: rawJson.longitude,
     },
-    originalAdUrl: rawJson.URL
+    originalAdUrl: rawJson.URL.slice(0, rawJson.URL.indexOf("&utm"))
 }};
