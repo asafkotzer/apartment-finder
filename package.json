@@ -37,7 +37,8 @@
     "sass-loader": "^3.1.2",
     "sendgrid": "^2.0.0",
     "style-loader": "^0.13.0",
-    "util": "^0.10.3"
+    "util": "^0.10.3",
+    "webdriverio": "^4.2.5"
   },
   "devDependencies": {}
 }
