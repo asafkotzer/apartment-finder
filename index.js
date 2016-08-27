@@ -5,13 +5,16 @@ const buildUrl = require('./url-builder.js');
 const sendEmail = require('./email-sender.js');
 const parseAd = require('./ad-parser.js');
 const adsRepository = require('./ads-repository.js');
-const browserFilter = require('./browser-filter.js')
+const adScraper = require('./ad-scraper.js')
 const moment = require('moment');
 const server = require('./management/server.js')
+const _ = require('lodash');
 
 const log = message => console.log('[' + moment().format('HH:mm') + '] ' + message);
 
 Object.defineProperty(Array.prototype, 'do', { value: function(f) { for (var item of this) f(item); return this; } });
+
+const checkForTraits = (ad, requiredTraits) => _.intersection(requiredTraits, ad.traits).length === requiredTraits.length;
 
 const getAdsFromPage = url => {
   if (!url) {
@@ -33,26 +36,23 @@ const getAdsFromPage = url => {
         .filter(x => geolib.isPointInside(x.location, query.searchArea))
         .filter(x => x.publishDate.isAfter(query.minimumPublishDate))
         .do(x => adsRepository.updateSent(x.id))
-        /*
-        Make checking for traits configurable (config.json)
-
-        Get the description: Array.prototype.map.call(document.querySelectorAll('.details_block_info > div > div'), el => el.innerText)
-
-        Get the pictures:
-        1. go to http://www.yad2.co.il/Nadlan/ViewImage.php?CatID=2&SubCatID={query.SubCatID}&RecordID={x.id}
-        2. on that page, execute:
-           Array.prototype.map.call(document.querySelectorAll('.imgesMuff img'), el => el.src).map(x => x.replace('/s/', '/o/').replace('-s.jpg','.jpg'))
-        3. Follow each URL to fetch the image
-        */
-        .map(x => browserFilter.checkForTraits(x.originalAdUrl, query.requiredTraits)
-          .then(hasTraits => {
-            console.log('Does ' + x.originalAdUrl + ' have traits? ' + hasTraits);
-            if (hasTraits) {
-              log('Sending email for ad: ' + x.originalAdUrl);
-              return sendEmail(x);
-            }
-            return Promise.resolve('did not send email');
-        }));
+        .map(x => {
+          console.log('pre-scraping');
+          if (query.scrape) {
+            return adScraper.scrape(x.originalAdUrl, x.id, x.source)
+              .then(scraped => Object.assign(x, scraped))
+              .then(x => {
+                console.log('Last filter:');
+                console.log(x);
+                if (checkForTraits(x, query.requiredTraits)) {
+                  log('Sending email for ad: ' + x.originalAdUrl);
+                  return sendEmail(x);
+                }
+                return Promise.resolve('did not send email');
+              })
+          }
+          return sendEmail(x);
+        });
 
         return Promise.all(operations)
           .then(() => adsRepository.flush())
@@ -64,7 +64,7 @@ const getAdsFromPage = url => {
 
 const fetchAds = () => {
   log('Starting recursion');
-  getAdsFromPage(buildUrl(query.apartment))
+  getAdsFromPage(buildUrl(query.apartment));
 };
 
 server();

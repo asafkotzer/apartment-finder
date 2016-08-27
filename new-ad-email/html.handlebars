@@ -1,12 +1,26 @@
 <div class="entry">
-	<p>דירת {{roomCount}} חדרים מ{{#foo source}}{{/foo}} ב{{city}}, רחוב {{address}}. מחיר: {{price}} ש״ח</p>
+	<p>דירת {{roomCount}} חדרים מ{{#formatSource source}}{{/formatSource}} ב{{city}}, רחוב {{address}}. מחיר: {{price}} ש״ח</p>
   	<p><a href={{originalAdUrl}}>המודעה המקורית</a></p>
+    <p>{{customText}}</p>
+    <div>
+      <ul>
+        {{#each traits}}
+          <li>{{this}}</li>
+        {{/each}}
+      </ul>
+    </div>
   	<div>
 		<a href="https://www.google.com/maps?z=12&t=m&q=loc:{{location.latitude}}+{{location.longitude}}">
 			<img src="https://maps.googleapis.com/maps/api/staticmap?keyAIzaSyAwUfJNBM7Uy7doaECdYJ813nlhRs17IT4=&zoom=15&size=400x300&markers={{location.latitude}},{{location.longitude}}" />
 	  	</a>
   	</div>
   	<div>
-  		<img src="{{picture}}" style="height:300px;width:400px"/>
+      <ul style="list-style:none;padding-left:0;">
+        {{#each images}}
+          <li>
+            <img src="{{this}}" style="height:300px;width:400px" />
+          </li>
+        {{/each}}
+      </ul>
   	</div>
 </div>

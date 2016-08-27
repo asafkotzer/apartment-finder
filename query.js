@@ -10,7 +10,7 @@ module.exports = {
     {latitude: 32.070865, longitude: 34.799881},
     {latitude: 32.076684, longitude: 34.802198},
   ],
-  minimumPublishDate: new Date('2/27/2016'),
+  minimumPublishDate: new Date('8/15/2016'),
   apartment: {
     FromPrice: 1500000,
     ToPrice: 2500000,
@@ -18,8 +18,9 @@ module.exports = {
     SubCatID:1,   // buy=1,rent=2
     FromRooms:3.5,
     ToRooms:4.5,
-    FromSQM:80,
+    FromSQM:90,
     ToSQM:125
   },
-  requiredTraits: ['חניה', 'מעלית'] //['מיזוג', 'סורגים', 'חניה', 'מעלית', 'גישה לנכים',  'ממ"ד', 'מרפסת', 'מרפסת שמש', 'מחסן', 'משופצת', 'דלתות פנדור', 'יחידת דיור']
+  scrape: true,             // this will get more details, but use it only if you don't have may apartments matching your query to avoid being blocked
+  requiredTraits: ['חניה', 'מעלית'] // ['מיזוג', 'סורגים', 'חניה', 'מעלית', 'גישה לנכים',  'ממ"ד', 'מרפסת', 'מרפסת שמש', 'מחסן', 'משופצת', 'דלתות פנדור', 'יחידת דיור']
 }

@@ -6,7 +6,7 @@ const templateDir = path.join(__dirname, 'new-ad-email')
 const emailTemplate = new EmailTemplate(templateDir)
 
 const Handlebars = require('handlebars');
-Handlebars.registerHelper('foo', function(source) {
+Handlebars.registerHelper('formatSource', function(source) {
   return source === 'agent' ? 'תיווך' : 'פרטי';
 });
 
