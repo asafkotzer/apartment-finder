@@ -18,6 +18,7 @@ module.exports = {
     SubCatID:1,   // buy=1,rent=2
     FromRooms:3.5,
     ToRooms:4.5,
+    arrHomeTypeID: [1, 7, 5, 39,33],//replace with HomeTypeID:X for single search.  1-apartment,3-garden apt, 6-penthaus or roof, 4-studio or loft, 7-duplex, 51- triplex,5- prati or cottege,11-yehidat diur , 33-migrash, 39-du mishpahti, 45-storage house.   
     FromSQM:90,
     ToSQM:125
   },
