@@ -42,6 +42,7 @@ const getAdsFromPage = (url, summary) => {
         .filter(x => x.publishDate.isAfter(query.minimumPublishDate))
         .do(x => incrementCounter(summary, 'after_min_publish_date', x.length))
         .do(x => adsRepository.updateSent(x.id))
+        .do(x => log(x.id))
         .map(x => {
           if (query.scrape) {
             return adScraper.scrape(x.originalAdUrl, x.id, x.source)

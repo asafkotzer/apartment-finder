@@ -27,7 +27,6 @@ const scrape = (url, id, source) => {
         .url(`http://www.yad2.co.il/Nadlan/ViewImage.php?CatID=2&SubCatID=${subCatId}&RecordID=${id}`)
         .execute(() => Array.prototype.map.call(document.querySelectorAll('.imgesMuff img'), el => el.src).map(x => x.replace('/s/', '/o/').replace('-s.jpg','.jpg')))
         .then(result => {
-          console.log(result);
           res.images = result.value;
         })
         .then(() => resolve(res))
