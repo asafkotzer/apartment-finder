@@ -22,6 +22,6 @@ module.exports = {
     FromSQM:90,
     ToSQM:125
   },
-  scrape: true,             // this will get more details, but use it only if you don't have may apartments matching your query to avoid being blocked
+  scrape: false,             // this will get more details, but use it only if you don't have may apartments matching your query to avoid being blocked
   requiredTraits: ['חניה', 'מעלית'] // ['מיזוג', 'סורגים', 'חניה', 'מעלית', 'גישה לנכים',  'ממ"ד', 'מרפסת', 'מרפסת שמש', 'מחסן', 'משופצת', 'דלתות פנדור', 'יחידת דיור']
 }
