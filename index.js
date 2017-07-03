@@ -1,8 +1,8 @@
-const fetch = require('node-fetch');
+const fetch = require('isomorphic-fetch');
 const geolib = require('geolib');
 const query = require('./query.js');
 const buildUrl = require('./url-builder.js');
-const sendEmail = require('./email-sender.js');
+const sendEmail = require('./dispatcher');
 const parseAd = require('./ad-parser.js');
 const adsRepository = require('./ads-repository.js');
 const adScraper = require('./ad-scraper.js')
@@ -23,7 +23,6 @@ const getAdsFromPage = (url, summary) => {
     log('Recursion complete: ' + JSON.stringify(summary))
     return;
   }
-
   fetch(url)
     .then(response => response.json())
     .then(json => {

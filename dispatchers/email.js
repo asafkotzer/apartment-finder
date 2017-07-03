@@ -1,8 +1,8 @@
-const emailConfig = require('./nconf.js').get('email');
+const emailConfig = require('../nconf.js').get('email');
 const path = require('path')
 const sendgrid = require('sendgrid')(emailConfig.sendgridApiKey);
 const EmailTemplate = require('email-templates').EmailTemplate
-const templateDir = path.join(__dirname, 'new-ad-email')
+const templateDir = path.join(__dirname, '..', 'new-ad-email')
 const emailTemplate = new EmailTemplate(templateDir)
 
 const Handlebars = require('handlebars');
