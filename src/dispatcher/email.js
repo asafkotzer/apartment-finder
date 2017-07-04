@@ -1,4 +1,4 @@
-const emailConfig = require('../nconf.js').get('email');
+const emailConfig = require('../nconf').get('email');
 const path = require('path')
 const sendgrid = require('sendgrid')(emailConfig.sendgridApiKey);
 const EmailTemplate = require('email-templates').EmailTemplate
