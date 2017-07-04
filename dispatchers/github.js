@@ -28,7 +28,7 @@ function dispatch(model) {
     return emailTemplate
         .render(model)
         .then(results =>
-            createIssue("AvivRubys", "apartments", results.text, results.html, ["new apartment"])
+            createIssue(config.repoOwner, config.repoName, results.text, results.html, config.labels)
         )
         .catch(err => console.error(err));
 }
