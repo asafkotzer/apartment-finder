@@ -23,6 +23,7 @@
     "file-loader": "^0.8.5",
     "geolib": "^2.0.18",
     "handlebars": "^3.0.3",
+    "he": "^1.1.1",
     "isomorphic-fetch": "^2.2.1",
     "jsonfile": "^2.2.3",
     "lodash": "^4.5.1",
@@ -35,7 +36,7 @@
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "sass-loader": "^3.1.2",
-    "sendgrid": "^2.0.0",
+    "sendgrid": "5.1.2",
     "style-loader": "^0.13.0",
     "util": "^0.10.3",
     "webdriverio": "^4.2.5"
