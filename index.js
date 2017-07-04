@@ -7,7 +7,6 @@ const parseAd = require('./ad-parser.js');
 const adsRepository = require('./ads-repository.js');
 const adScraper = require('./ad-scraper.js')
 const moment = require('moment');
-const server = require('./management/server.js')
 const _ = require('lodash');
 
 const log = message => console.log('[' + moment().format('HH:mm') + '] ' + message);
@@ -71,8 +70,6 @@ const fetchAds = () => {
   log('Starting recursion');
   getAdsFromPage(buildUrl(query.apartment), {});
 };
-
-server();
 
 fetchAds();
 setInterval(() => fetchAds(), 60*60*1000);

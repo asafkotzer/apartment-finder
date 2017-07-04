@@ -1,5 +1,4 @@
 const webdriverio = require('webdriverio')
-const Promise = require('bluebird');
 
 const options = {
     desiredCapabilities: {
