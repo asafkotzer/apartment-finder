@@ -13,11 +13,11 @@
     "geolib": "^2.0.18",
     "github": "^9.2.0",
     "handlebars": "^3.0.3",
-    "isomorphic-fetch": "^2.2.1",
     "jsonfile": "^2.2.3",
     "lodash": "^4.5.1",
     "moment": "^2.11.2",
     "nconf": "^0.8.4",
+    "node-fetch": "^1.7.1",
     "node-uuid": "^1.4.7",
     "sendgrid": "^2.0.0",
     "webdriverio": "^4.2.5"

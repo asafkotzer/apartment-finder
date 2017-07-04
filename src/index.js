@@ -1,4 +1,4 @@
-const fetch = require('isomorphic-fetch');
+const fetch = require('node-fetch');
 const geolib = require('geolib');
 const query = require('../config/query');
 const buildUrl = require('./url-builder');
