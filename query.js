@@ -1,4 +1,5 @@
 module.exports = {
+  //use https://www.doogal.co.uk/polylines.php
   searchArea: [
     {latitude: 32.078284, longitude: 34.801168},
     {latitude: 32.079157, longitude: 34.815073},
@@ -10,18 +11,35 @@ module.exports = {
     {latitude: 32.070865, longitude: 34.799881},
     {latitude: 32.076684, longitude: 34.802198},
   ],
-  minimumPublishDate: new Date('8/15/2016'),
+  minimumPublishDate: new Date('7/04/2017'),
   apartment: {
-    FromPrice: 1500000,
-    ToPrice: 2500000,
-    AreaID:2,     // 1:TA, 2:center, 3:Ramat-Gan-Givatatyim, 48:TA center, 19:HaSharon
-    SubCatID:1,   // buy=1,rent=2
-    FromRooms:3.5,
-    ToRooms:4.5,
-    arrHomeTypeID: [1, 7, 5, 39,33],//replace with HomeTypeID:X for single search.  1-apartment,3-garden apt, 6-penthaus or roof, 4-studio or loft, 7-duplex, 51- triplex,5- prati or cottege,11-yehidat diur , 33-migrash, 39-du mishpahti, 45-storage house.   
-    FromSQM:90,
-    ToSQM:125
+    fromPrice: 4000,
+    toPrice: 6000,
+    area: 1,     // 1:TA, 2:center, 3:Ramat-Gan-Givatatyim, 48:TA center, 19:HaSharon
+    subcat: 2,   //buy=1,rent=2, tivuc rent=6
+    fromRooms: 3,
+    toRooms: 4.5,
+    imgOnly: 1,
+    priceOnly: 1
+    //HomeTypeID: 6, //for multi types use appartmentTypes. otherwise: 1-apartment,3-garden apt, 6-penthaus or roof, 4-studio or loft, 7-duplex, 51- triplex,5- prati or cottege,11-yehidat diur , 33-migrash, 39-du mishpahti, 45-storage house.
+    //fromSquareMeter: 70
+    //toSquareMeter: 100,
+    
+    //parking: 1,
+    //elevator: 1,
+    //airConditioner: 1,
+    //renovated: 1,
+    //balcony: 1,
+    //sunProch: 1,
+    //warhouse: 1,
+    //furniture: 1,
+    //forPartners: 1,
+    //furniture: 1,
+    //accessibility: 1,
+    //bars: 1
   },
-  scrape: false,             // this will get more details, but use it only if you don't have may apartments matching your query to avoid being blocked
-  requiredTraits: ['חניה', 'מעלית'] // ['מיזוג', 'סורגים', 'חניה', 'מעלית', 'גישה לנכים',  'ממ"ד', 'מרפסת', 'מרפסת שמש', 'מחסן', 'משופצת', 'דלתות פנדור', 'יחידת דיור']
+  appartmentTypes: ['דירת גן', 'דופלקס', 'גג/פנטהאוז', 'דירה'], //add exact names of wanted apartment type to filter
+
+  //BEAWARE: scrape have not been tested with the latest version of yad2
+  scrape: false             // this will get more details, but use it only if you don't have may apartments matching your query to avoid being blocked
 }

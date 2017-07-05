@@ -1,24 +1,39 @@
-
-
 const moment = require('moment');
+const he = require('he');
 
 const log = message => console.log('[' + moment().format('HH:mm') + '] ' + message);
+const decodeIfExist = (o) => o ? he.decode(o) : '';
+
+const getAdSource = (subcat_id) => {
+  switch (subcat_id) {
+    case (6):
+      return 'agent';
+    case (2):
+    default:
+      return 'private';
+  }
+}
 
 module.exports = rawJson => {
   //log('raw jason: ' + rawJson.Line6)
+
+  let [aparttype = '', roomCount = '', floor = ''] = decodeIfExist(rawJson.line_1).split('·').map(x => x.trim().replace('\"', '').replace(/'/g, ''));
+
   return {
-    id: rawJson.RecordID,
-    source: rawJson.source,
-    city: rawJson.Line1.split('-')[0].trim(),
-    address: (rawJson.Line1.split('-')[1] || '').trim().replace('\"', '').replace('\'', ''),
-    roomCount: (rawJson.Line2.split('-')[1] || '').trim().replace('\"', '').replace('\'', ''), 
-	aparttype: (rawJson.Line2.split('-')[0] || '').trim().replace('\"', '').replace('\'', ''),
-    price: (rawJson.Line3.match(/\d+/g) || []).join(''),
-    publishDate: moment(rawJson.Line4, 'DD-MM-YYYY'),
-    picture: rawJson.img.replace('/s/','/o/').replace('-mobile-s',''),
+    id: rawJson.id,
+    source: getAdSource(rawJson.subcat_id),
+    city: decodeIfExist(rawJson.title_1).replace('\"', '').replace(/'/g, ''),
+    address: (decodeIfExist(rawJson.title_2).split(',')[0] || '').trim().replace('\"', '').replace(/'/g, ''),
+    roomCount,
+    aparttype,
+    floor,
+    price: (rawJson.price.match(/\d+/g) || []).join(''),
+    publishDate: moment(rawJson.date, 'YYYY-MM-DD HH:mm:ss'),
+    picture: decodeIfExist(rawJson.img_url).replace('//', ''),
     location: {
-      latitude: rawJson.latitude,
-      longitude: rawJson.longitude,
+      latitude: rawJson.coordinates ? rawJson.coordinates.latitude : undefined,
+      longitude: rawJson.coordinates ? rawJson.coordinates.longitude : undefined,
     },
-    originalAdUrl: rawJson.URL.slice(0, rawJson.URL.indexOf("&utm"))
-}};
+    originalAdUrl: `http://yad2.co.il/s/c/${rawJson.id}`
+  }
+};

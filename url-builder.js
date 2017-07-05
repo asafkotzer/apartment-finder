@@ -1,16 +1,14 @@
 const _ = require('lodash');
-const uuid = require('node-uuid');
 
-module.exports = (options) => {
-  const base = "http://m.yad2.co.il/API/MadorResults.php?";
+module.exports = (options, page = 1) => {
+  const base = "https://app.yad2.co.il/api/v1.0/feed/feed.php?";
   const defaults = {
-    CatID:2,    //cars=1,apartments=2
-    SubCatID:1, //buy=1,rent=2
-    PriceType:'0.0',
-    AppType:'Android',
-    AppVersion:'2.4',
-    DeviceType:'GT-I9300',
-    udid:uuid.v1()
+    cat: 2,    //cars=1,apartments=2
+    subcat: 2, //buy=1,rent=2, tivuc rent=6
+    feedtype: 'search',
+    sort: 0,
+    location_type: 3,
+    page
   }
 
   return base + _.toPairs(Object.assign(defaults, options)).map(x => x.join('=')).join('&');

@@ -1,7 +1,8 @@
-<div class="entry">
+<div align="right" class="entry">
 	<p>{{aparttype}} {{roomCount}} מ{{#formatSource source}}{{/formatSource}} ב{{city}}, רחוב {{address}}. מחיר: {{price}} ש״ח</p>
   	<p><a href={{originalAdUrl}}>המודעה המקורית</a></p>
     <p>{{customText}}</p>
+    <img src="{{picture}}" style="max-height:300px;max-width:400px"/>
     <div>
       <ul>
         {{#each traits}}
@@ -11,7 +12,7 @@
     </div>
   	<div>
 		<a href="https://www.google.com/maps?z=12&t=m&q=loc:{{location.latitude}}+{{location.longitude}}">
-			<img src="https://maps.googleapis.com/maps/api/staticmap?keyAIzaSyAwUfJNBM7Uy7doaECdYJ813nlhRs17IT4=&zoom=15&size=400x300&markers={{location.latitude}},{{location.longitude}}" />
+			<img src="https://maps.googleapis.com/maps/api/staticmap?key=AIzaSyAwUfJNBM7Uy7doaECdYJ813nlhRs17IT4=&format=png&visual_refresh=true&zoom=15&size=400x300&markers={{location.latitude}},{{location.longitude}}" />
 	  	</a>
   	</div>
   	<div>
