@@ -17,13 +17,13 @@ const getAdSource = (subcat_id) => {
 module.exports = rawJson => {
   //log('raw jason: ' + rawJson.Line6)
 
-  let [aparttype = '', roomCount = '', floor = ''] = decodeIfExist(rawJson.line_1).split('·').map(x => x.trim().replace('\"', '').replace('\'', ''));
+  let [aparttype = '', roomCount = '', floor = ''] = decodeIfExist(rawJson.line_1).split('·').map(x => x.trim().replace('\"', '').replace(/'/g, ''));
 
   return {
     id: rawJson.id,
     source: getAdSource(rawJson.subcat_id),
-    city: decodeIfExist(rawJson.title_1).replace('\"', '').replace('\'', ''),
-    address: (decodeIfExist(rawJson.title_2).split(',')[0] || '').trim().replace('\"', '').replace('\'', '').replace("&#x27;",''),
+    city: decodeIfExist(rawJson.title_1).replace('\"', '').replace(/'/g, ''),
+    address: (decodeIfExist(rawJson.title_2).split(',')[0] || '').trim().replace('\"', '').replace(/'/g, ''),
     roomCount,
     aparttype,
     floor,
