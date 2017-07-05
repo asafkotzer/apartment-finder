@@ -19,8 +19,9 @@
     "nconf": "^0.8.4",
     "node-fetch": "^1.7.1",
     "node-uuid": "^1.4.7",
-    "sendgrid": "^2.0.0",
-    "webdriverio": "^4.2.5"
+    "sendgrid": "^2.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "jest": "^20.0.4"
+  }
 }

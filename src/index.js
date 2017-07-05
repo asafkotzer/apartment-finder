@@ -5,7 +5,6 @@ const buildUrl = require('./url-builder');
 const sendEmail = require('./dispatcher');
 const parseAd = require('./ad-parser');
 const adsRepository = require('./ads-repository');
-const adScraper = require('./ad-scraper');
 const moment = require('moment');
 const _ = require('lodash');
 
@@ -17,9 +16,6 @@ Object.defineProperty(Array.prototype, 'do', {
 		return this;
 	},
 });
-
-const checkForTraits = (ad, requiredTraits) =>
-	_.intersection(requiredTraits, ad.traits).length === requiredTraits.length;
 
 const incrementCounter = (summary, counterName, addition) =>
 	(summary[counterName] = summary[counterName] + (addition || 1) || (addition || 1));
@@ -49,23 +45,7 @@ const getAdsFromPage = (url, summary) => {
 				.do(x => incrementCounter(summary, 'after_min_publish_date', x.length))
 				.do(x => adsRepository.updateSent(x.id))
 				.do(x => log(x.id))
-				.map(x => {
-					if (query.scrape) {
-						return adScraper
-							.scrape(x.originalAdUrl, x.id, x.source)
-							.then(scraped => Object.assign(x, scraped))
-							.then(x => {
-								if (checkForTraits(x, query.requiredTraits)) {
-									incrementCounter(summary, 'passed_advanced_filter');
-									log('Sending email for ad: ' + x.originalAdUrl);
-									return sendEmail(x);
-								}
-								return Promise.resolve('did not send email');
-							});
-					}
-					incrementCounter(summary, 'skipped_advanced_filter');
-					return sendEmail(x);
-				});
+				.map(x => sendEmail(x));
 
 			return Promise.all(operations).then(() => adsRepository.flush()).then(() => json.NextPageURL);
 		})
