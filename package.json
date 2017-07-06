@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "co": "^4.6.0",
     "email-templates": "^2.1.0",
     "geolib": "^2.0.18",
     "github": "^9.2.0",

@@ -89,7 +89,7 @@ class Ad {
 }
 
 function parseAds(apiResponse) {
-    return apiResponse.data.feed_items.filter(item => item.id).map(item => new Ad(item));
+    return apiResponse.data.feed_items.filter(item => item.id).filter(item => item.type === 'ad').map(item => new Ad(item));
 }
 
 module.exports = {
