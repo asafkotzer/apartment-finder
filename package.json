@@ -15,11 +15,12 @@
     "github": "^9.2.0",
     "handlebars": "^3.0.3",
     "jsonfile": "^2.2.3",
-    "lodash": "^4.5.1",
+    "lodash": "^4.17.4",
     "moment": "^2.11.2",
     "nconf": "^0.8.4",
     "node-fetch": "^1.7.1",
     "node-uuid": "^1.4.7",
+    "promisify-node": "^0.4.0",
     "sendgrid": "^2.0.0"
   },
   "devDependencies": {

@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 const query = require('../config/query');

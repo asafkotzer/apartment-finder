@@ -1,3 +1,7 @@
+const moment = require('moment')
+
+const parseIsraelDate = x => moment(x, 'DD/MM/YYYY')
+
 module.exports = {
 	searchArea: [
 		{latitude: 32.086111, longitude: 34.769027},
@@ -5,7 +9,7 @@ module.exports = {
 		{latitude: 32.073346, longitude: 34.782014},
 		{latitude: 32.062221, longitude: 34.773691},
 	],
-	minimumPublishDate: new Date('6/17/2017'),
+	minimumEntranceDate: parseIsraelDate('15/08/2017'),
 	apartment: {
 		cat: 2,
 		subcat: 2,
@@ -16,6 +20,7 @@ module.exports = {
 		toRooms: 3.5,
 		fromSquareMeter: 60,
 		toSquareMeter: 85,
+
 		parking: 0,
 		elevator: 0,
 		airConditioner: 1,
