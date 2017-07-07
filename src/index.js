@@ -1,62 +1,67 @@
-const fetch = require('node-fetch');
+const os = require('os');
 const geolib = require('geolib');
-const query = require('../config/query');
-const buildUrl = require('./url-builder');
-const sendEmail = require('./dispatcher');
-const parseAd = require('./ad-parser');
-const adsRepository = require('./ads-repository');
 const moment = require('moment');
+const geolib = require('geolib');
 const _ = require('lodash');
+const co = require('co');
+
+const fetcher = require('./fetcher');
+const buildUrl = require('./url-builder');
+const dispatcher = require('./dispatcher');
+const {Ad, parseAds} = require('./ad-parser');
+const adsRepository = require('./ads-repository');
+const Stats = require('./stats');
+
+const query = require('../config/query');
 
 const log = message => console.log('[' + moment().format('HH:mm') + '] ' + message);
 
-Object.defineProperty(Array.prototype, 'do', {
-	value: function(f) {
-		for (var item of this) f(item);
-		return this;
-	},
+const processAds = co.wrap(function*() {
+    const summary = new Stats();
+
+    const processPage = function*(pageNumber) {
+        const page = yield fetcher.fetchPage({page: currentPage});
+        const ads = parseAds(page);
+
+        summary.increment('retrieved', ads.length);
+
+        yield _.chain(ads)
+            .filter(ad => !adsRepository.wasAlreadySent(ad.id))
+            .forEach(ad => summary.increment('not_already_handled'))
+            .filter(ad => geolib.isPointInside(ad.coordinates, query.searchArea))
+            .forEach(ad => summary.increment('within_polygon'))
+            .map(ad => fetcher.fetchAd(ad).then(extraAdData => ad.addSingleAdApi(extraAdData)))
+            .value();
+
+        yield _.chain(ads)
+            .filter(ad => ad.entrance >= query.minimumEntranceDate)
+            .forEach(ad => summary.increment('after_minimal_entrance_date'))
+            .map(ad => dispatcher(ad).then(() => adsRepository.updateSent(ad.id)))
+            .value();
+
+        yield adsRepository.flush();
+
+        return {
+            done: page.data.current_page === page.data.total_pages,
+        };
+    };
+
+    let currentPage = 1;
+    while (true) {
+        try {
+            const result = yield processPage(currentPage++);
+
+            if (result.done) {
+                break;
+            }
+        } catch (error) {
+            log(error);
+        }
+    }
+
+    log('Done with run!');
+    log(summary.toString() + os.EOL + os.EOL);
 });
 
-const incrementCounter = (summary, counterName, addition) =>
-	(summary[counterName] = summary[counterName] + (addition || 1) || (addition || 1));
-
-const getAdsFromPage = (url, summary) => {
-	if (!url) {
-		log('Recursion complete: ' + JSON.stringify(summary));
-		return;
-	}
-	fetch(url)
-		.then(response => response.json())
-		.then(json => {
-			const results = ((json.Private || {}).Results || [])
-				.map(x => Object.assign(x, {source: 'private'}))
-				.concat(((json.Trade || {}).Results || []).map(x => Object.assign(x, {source: 'agent'})));
-
-			const operations = results
-				.filter(x => x.Type === 'Ad')
-				.map(x => parseAd(x))
-				.do(x => incrementCounter(summary, 'retrieved', x.length))
-				.filter(x => !adsRepository.wasAlreadySent(x.id))
-				.do(x => incrementCounter(summary, 'not_already_handled', x.length))
-				.filter(x => x.location.latitude && x.location.longitude)
-				.filter(x => geolib.isPointInside(x.location, query.searchArea))
-				.do(x => incrementCounter(summary, 'within_polygon', x.length))
-				.filter(x => x.publishDate.isAfter(query.minimumPublishDate))
-				.do(x => incrementCounter(summary, 'after_min_publish_date', x.length))
-				.do(x => adsRepository.updateSent(x.id))
-				.do(x => log(x.id))
-				.map(x => sendEmail(x));
-
-			return Promise.all(operations).then(() => adsRepository.flush()).then(() => json.NextPageURL);
-		})
-		.then(nextPageUrl => getAdsFromPage(nextPageUrl, summary))
-		.catch(err => log(err));
-};
-
-const fetchAds = () => {
-	log('Starting recursion');
-	getAdsFromPage(buildUrl(query.apartment), {});
-};
-
-fetchAds();
-setInterval(() => fetchAds(), 60 * 60 * 1000);
+processAds();
+//setInterval(processAds, 60 * 60 * 1000);

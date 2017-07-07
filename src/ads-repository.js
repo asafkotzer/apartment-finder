@@ -1,7 +1,7 @@
 const promisify = require("promisify-node");
 const jsonfile = promisify('jsonfile');
 
-const previousAdsFilename = './previous-ads.json';
+const previousAdsFilename = '../previous-ads.json';
 const previousAds = (jsonfile.readFileSync(previousAdsFilename) || {}).ads || [];
 
 module.exports = {
