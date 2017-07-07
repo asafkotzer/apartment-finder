@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "co": "^4.6.0",
+    "express": "^4.15.3",
     "geolib": "^2.0.18",
     "github": "^9.2.0",
     "jsonfile": "^2.2.3",

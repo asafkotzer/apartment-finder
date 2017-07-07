@@ -8,6 +8,7 @@ const fetcher = require('./fetcher');
 const dispatcher = require('./dispatcher');
 const {EnhancedAd, parseAds} = require('./ad-parser');
 const adsRepository = require('./ads-repository');
+const management = require('./management');
 const Stats = require('./stats');
 
 const query = require('../config/query');
@@ -38,10 +39,15 @@ const processAds = co.wrap(function*() {
             .forEach(ad => summary.increment('has_known_entrance_date'))
             .filter(ad => ad.entrance >= query.minimumEntranceDate)
             .forEach(ad => summary.increment('after_minimal_entrance_date'))
-            .map(ad => dispatcher(ad).then(() => adsRepository.updateSent(ad.id)))
+            .map(ad => {
+                dispatcher(ad)
+                    .then(() => adsRepository.updateSent(ad.id))
+                    .then(() => summary.increment('dispatched'))
+            })
             .value();
 
         yield adsRepository.flush();
+        management.updateStats(summary.toHtml());
 
         return {
             done: page.data.current_page === page.data.total_pages,

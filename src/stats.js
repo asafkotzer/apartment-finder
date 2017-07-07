@@ -15,6 +15,12 @@ class Stats {
         this.stats.set(stat, currentStat + count);
     }
 
+    toHtml() {
+        return Array.from(this.stats.entries())
+            .map(([key, value]) => `${key}: ${value}`)
+            .join('<br />');
+    }
+
     toString() {
         return Array.from(this.stats.entries()).map(([key, value]) => `${key}: ${value}`).join(os.EOL);
     }
