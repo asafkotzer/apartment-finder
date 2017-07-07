@@ -1,14 +1,12 @@
 const os = require('os');
 const geolib = require('geolib');
 const moment = require('moment');
-const geolib = require('geolib');
 const _ = require('lodash');
 const co = require('co');
 
 const fetcher = require('./fetcher');
-const buildUrl = require('./url-builder');
 const dispatcher = require('./dispatcher');
-const {Ad, parseAds} = require('./ad-parser');
+const {EnhancedAd, parseAds} = require('./ad-parser');
 const adsRepository = require('./ads-repository');
 const Stats = require('./stats');
 
@@ -25,15 +23,19 @@ const processAds = co.wrap(function*() {
 
         summary.increment('retrieved', ads.length);
 
-        yield _.chain(ads)
+        const enhancedAds = yield _.chain(ads)
             .filter(ad => !adsRepository.wasAlreadySent(ad.id))
             .forEach(ad => summary.increment('not_already_handled'))
+            .filter(ad => ad.coordinates.latitude && ad.coordinates.longitude)
+            .forEach(ad => summary.increment('has_coordinates'))
             .filter(ad => geolib.isPointInside(ad.coordinates, query.searchArea))
             .forEach(ad => summary.increment('within_polygon'))
-            .map(ad => fetcher.fetchAd(ad).then(extraAdData => ad.addSingleAdApi(extraAdData)))
+            .map(ad => fetcher.fetchAd(ad).then(extraAdData => new EnhancedAd(ad, extraAdData)))
             .value();
 
-        yield _.chain(ads)
+        yield _.chain(enhancedAds)
+            .filter(ad => ad.isEntranceKnown) // If you want instant entrance you need to modify this
+            .forEach(ad => summary.increment('has_known_entrance_date'))
             .filter(ad => ad.entrance >= query.minimumEntranceDate)
             .forEach(ad => summary.increment('after_minimal_entrance_date'))
             .map(ad => dispatcher(ad).then(() => adsRepository.updateSent(ad.id)))
@@ -64,4 +66,4 @@ const processAds = co.wrap(function*() {
 });
 
 processAds();
-//setInterval(processAds, 60 * 60 * 1000);
+setInterval(processAds, 60 * 60 * 1000);

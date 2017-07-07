@@ -11,7 +11,7 @@ function fetchPage(options) {
 	const formData = new FormData();
 
 	Object.keys(queryParams).forEach(key => {
-		formData.append(key, query.apartment[key]);
+		formData.append(key, queryParams[key]);
 	});
 
 	return fetch(BASE_PAGE_URL, {

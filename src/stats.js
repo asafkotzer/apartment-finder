@@ -19,3 +19,5 @@ class Stats {
         return Array.from(this.stats.entries()).map(([key, value]) => `${key}: ${value}`).join(os.EOL);
     }
 }
+
+module.exports = Stats;
