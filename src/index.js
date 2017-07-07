@@ -35,15 +35,16 @@ const processAds = co.wrap(function*() {
             .value();
 
         yield _.chain(enhancedAds)
-            .filter(ad => ad.isEntranceKnown) // If you want instant entrance you need to modify this
+            .filter(ad => ad.isEntranceKnown) // If you want instant entrance you need to comment this and the next two lines
             .forEach(ad => summary.increment('has_known_entrance_date'))
             .filter(ad => ad.entrance >= query.minimumEntranceDate)
             .forEach(ad => summary.increment('after_minimal_entrance_date'))
-            .map(ad => {
-                dispatcher(ad)
-                    .then(() => adsRepository.updateSent(ad.id))
-                    .then(() => summary.increment('dispatched'))
-            })
+            .map(ad => 
+                dispatcher(ad).then(() => {
+                    adsRepository.updateSent(ad.id);
+                    summary.increment('dispatched');
+                })
+            )
             .value();
 
         yield adsRepository.flush();
