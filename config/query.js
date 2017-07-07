@@ -40,5 +40,4 @@ module.exports = {
 		priceOnly: 0,
 		imgOnly: 1,
 	},
-	scrape: false, // this will get more details, but use it only if you don't have may apartments matching your query to avoid being blocked
 }
