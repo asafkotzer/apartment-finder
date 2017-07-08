@@ -15,6 +15,16 @@ const query = require('../config/query');
 
 const log = message => console.log('[' + moment().format('HH:mm') + '] ' + message);
 
+function addMatchingAreas(ad) {
+    const matchingAreas = _.chain(query.areas)
+        .defaultTo([])
+        .filter(area => geolib.isPointInside(ad.coordinates, area.points))
+        .flatMap(area => area.labels)
+        .value();
+    
+    ad.setMatchingAreas(matchingAreas);
+}
+
 const processAds = co.wrap(function*() {
     const summary = new Stats();
 
@@ -29,7 +39,8 @@ const processAds = co.wrap(function*() {
             .forEach(ad => summary.increment('not_already_handled'))
             .filter(ad => ad.coordinates.latitude && ad.coordinates.longitude)
             .forEach(ad => summary.increment('has_coordinates'))
-            .filter(ad => geolib.isPointInside(ad.coordinates, query.searchArea))
+            .forEach(ad => addMatchingAreas(ad))
+            .filter(ad => ad.matchingAreas.length > 0)
             .forEach(ad => summary.increment('within_polygon'))
             .map(ad => fetcher.fetchAd(ad).then(extraAdData => new EnhancedAd(ad, extraAdData)))
             .value();

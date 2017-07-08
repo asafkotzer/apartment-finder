@@ -19,8 +19,9 @@ function createIssue(owner, repo, title, body, labels) {
 
 function dispatch(ad) {
     const rendered = render(ad, 'markdown');
+    const labels = (config.labels || []).concat(ad.matchingAreas || []);
 
-    return createIssue(config.repoOwner, config.repoName, rendered.title, rendered.body, config.labels).catch(err =>
+    return createIssue(config.repoOwner, config.repoName, rendered.title, rendered.body, labels).catch(err =>
         console.error(err)
     );
 }

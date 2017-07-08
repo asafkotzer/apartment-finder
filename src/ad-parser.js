@@ -86,6 +86,11 @@ class BasicAd {
         this.id = apiResponse.id;
         this.url = `http://yad2.co.il/s/c/${apiResponse.link_token}`;
         this.merchant = apiResponse.merchant;
+        this.matchingAreas = [];
+    }
+
+    setMatchingAreas(areas) {
+        this.matchingAreas = areas;
     }
 }
 

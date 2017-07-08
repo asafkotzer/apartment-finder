@@ -9,7 +9,7 @@ function renderTitle(ad) {
 function renderMap(ad) {
     const image = `![](https://maps.googleapis.com/maps/api/staticmap?key=AIzaSyAwUfJNBM7Uy7doaECdYJ813nlhRs17IT4=&zoom=15&size=400x300&markers=${ad.coordinates.latitude},${ad.coordinates.longitude})`
 
-    return `[${image}](http://maps.google.com/?q=${ad.coordinates.latitude},${ad.coordinates.latitude})`;
+    return `[${image}](http://maps.google.com/?q=${ad.coordinates.latitude},${ad.coordinates.longitude})`;
 }
 
 function renderImages(ad) {
