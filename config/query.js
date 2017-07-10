@@ -4,8 +4,21 @@ const parseIsraelDate = x => moment(x, 'DD/MM/YYYY');
 
 module.exports = {
     areas: [
+		{
+            labels: ['new apartment', 'חזרה למעברה'],
+            points: [
+				{latitude: 32.0931915, longitude: 34.8018980},
+				{latitude: 32.0795929, longitude: 34.7979498},
+				{latitude: 32.0827382, longitude: 34.8115540},
+				{latitude: 32.0861197, longitude: 34.8170900},
+				{latitude: 32.0868288, longitude: 34.8224115},
+				{latitude: 32.0907737, longitude: 34.8227119},
+				{latitude: 32.0970816, longitude: 34.8175836},
+				{latitude: 32.0931915, longitude: 34.8018980},
+            ],
+        },
         {
-            labels: ['הצנטרום של הפיילה'],
+            labels: ['new apartment', 'הצנטרום של הפיילה'],
             points: [
                 {latitude: 32.086111, longitude: 34.769027},
                 {latitude: 32.084575, longitude: 34.785463},
@@ -14,10 +27,10 @@ module.exports = {
             ],
         },
         {
-            labels: ['tushtush zone'],
+            labels: ['new apartment', 'tushtush zone'],
             points: [
                 {latitude: 32.0671196, longitude: 34.7626948},
-                {latitude: 32.0500616, longitude: 34.7528028},
+                {latitude: 32.0533444, longitude: 34.7541547},
                 {latitude: 32.0486248, longitude: 34.7636712},
                 {latitude: 32.0546902, longitude: 34.7650981},
                 {latitude: 32.0547447, longitude: 34.7721148},
@@ -36,7 +49,7 @@ module.exports = {
         city: 1800,
         fromRooms: 2,
         toRooms: 3.5,
-        fromSquareMeter: 60,
+        fromSquareMeter: 50,
         toSquareMeter: 85,
 
         // Only add the filters you actually need. 0 = false, 1 = true, commented out = whatever
