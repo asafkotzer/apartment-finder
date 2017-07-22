@@ -4,21 +4,8 @@ const parseIsraelDate = x => moment(x, 'DD/MM/YYYY');
 
 module.exports = {
     areas: [
-		{
-            labels: ['new apartment', 'חזרה למעברה'],
-            points: [
-				{latitude: 32.0931915, longitude: 34.8018980},
-				{latitude: 32.0795929, longitude: 34.7979498},
-				{latitude: 32.0827382, longitude: 34.8115540},
-				{latitude: 32.0861197, longitude: 34.8170900},
-				{latitude: 32.0868288, longitude: 34.8224115},
-				{latitude: 32.0907737, longitude: 34.8227119},
-				{latitude: 32.0970816, longitude: 34.8175836},
-				{latitude: 32.0931915, longitude: 34.8018980},
-            ],
-        },
         {
-            labels: ['new apartment', 'הצנטרום של הפיילה'],
+            labels: ['new apartment', 'מרכז תל אביב'],
             points: [
                 {latitude: 32.086111, longitude: 34.769027},
                 {latitude: 32.084575, longitude: 34.785463},
@@ -27,7 +14,7 @@ module.exports = {
             ],
         },
         {
-            labels: ['new apartment', 'tushtush zone'],
+            labels: ['new apartment', 'דרום תל אביב'],
             points: [
                 {latitude: 32.0671196, longitude: 34.7626948},
                 {latitude: 32.0533444, longitude: 34.7541547},
