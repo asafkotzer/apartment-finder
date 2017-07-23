@@ -2,7 +2,7 @@
 
 
 ## Usage
-* Create a config.json and put it in the root folder
+* Create a config.json and put it in the `config` folder
 ```
 {
   "dispatcher": {
