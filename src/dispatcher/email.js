@@ -14,7 +14,13 @@ const send = options => {
         html: options.body,
     };
 
-    return sendgrid.send(message, callback);
+    return new Promise((resolve, reject) => sendgrid.send(message, (error) => {
+        if (error) {
+            reject(error);
+        } else {
+            resolve();
+        }
+    }));
 };
 
 function dispatch(ad) {
