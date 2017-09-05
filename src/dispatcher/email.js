@@ -1,7 +1,7 @@
 const emailConfig = require('../nconf').get('dispatcher').email;
 const sendgrid = require('sendgrid')(emailConfig.sendgridApiKey);
-const sendGridSend = promisify(sendgrid.send);
 const promisify = require('promisify-node');
+const sendGridSend = promisify(sendgrid.send);
 const renderer = require('./renderer');
 
 const send = options => {
