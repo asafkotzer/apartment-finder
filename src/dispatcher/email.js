@@ -1,7 +1,7 @@
-const emailConfig = require('../nconf').get('email');
+const emailConfig = require('../nconf').get('dispatcher').email;
 const sendgrid = require('sendgrid')(emailConfig.sendgridApiKey);
-const sendGridSend = promisify(sendgrid.send);
 const promisify = require('promisify-node');
+const sendGridSend = promisify(sendgrid.send);
 const renderer = require('./renderer');
 
 const send = options => {
@@ -14,7 +14,13 @@ const send = options => {
         html: options.body,
     };
 
-    return sendgrid.send(message, callback);
+    return new Promise((resolve, reject) => sendgrid.send(message, (error) => {
+        if (error) {
+            reject(error);
+        } else {
+            resolve();
+        }
+    }));
 };
 
 function dispatch(ad) {
